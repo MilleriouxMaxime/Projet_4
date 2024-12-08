@@ -7,3 +7,11 @@ class Player:
 
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
+
+    def to_dict(self):
+        return {
+            "last_name": self.last_name,
+            "first_name": self.first_name,
+            "birth_date": self.birth_date,
+            "identifier": self.identifier,
+        }

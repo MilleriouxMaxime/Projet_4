@@ -7,3 +7,11 @@ class Round:
 
     def __str__(self):
         return f"Round{self.name}, {self.matchs_list} date de début : {self.start_time}, date de fin : {self.end_time}"
+
+    def to_dict(self):
+        return {
+            "matches": [match.to_dict() for match in self.matches],
+            "round_number": self.round_number,
+            "start_date": self.start_date,
+            "end_date": self.end_date,
+        }
