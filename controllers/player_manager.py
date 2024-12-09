@@ -1,5 +1,5 @@
 from models.player import Player
-import json
+from utils.db import players_table
 
 
 class PlayerManager:
@@ -15,3 +15,14 @@ class PlayerManager:
             birth_date,
             identifier,
         )
+        players_table.insert(player.to_dict())
+
+    def run(self):
+        while True:
+            print("1. Creer un joueur")
+            print("q. Quitter")
+            choice = input("Votre choix: ")
+            if choice == "1":
+                self.create_player()
+            elif choice == "q":
+                break

@@ -2,7 +2,9 @@ from models.player import Player
 from models.tournament import Tournament
 from models.match import Match
 from models.round import Round
-from controlers.tournament_manager import TournamentManager
+from controllers.tournament_manager import TournamentManager
+from controllers.player_manager import PlayerManager
+from controllers.menu_manager import MenuManager
 
 
 def main():
@@ -21,10 +23,10 @@ def main():
 
     # round1 = Round([match1, match2], 1, "05/08/2023", "05/08/2023")
 
-    # print(match1)
+    # print(round1.to_dict())
 
-    manager = TournamentManager()
-    manager.create_tournament()
+    menu_manager = MenuManager()
+    menu_manager.run()
 
 
 if __name__ == "__main__":

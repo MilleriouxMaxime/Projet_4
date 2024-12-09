@@ -1,5 +1,14 @@
+from models.match import Match
+
+
 class Round:
-    def __init__(self, matchs_list, name, start_time, end_time):
+    def __init__(
+        self,
+        matchs_list: list[Match],
+        name,
+        start_time,
+        end_time,
+    ):
         self.matchs_list = matchs_list
         self.name = name
         self.start_time = start_time
@@ -10,8 +19,8 @@ class Round:
 
     def to_dict(self):
         return {
-            "matches": [match.to_dict() for match in self.matches],
-            "round_number": self.round_number,
-            "start_date": self.start_date,
-            "end_date": self.end_date,
+            "matches": [match.to_dict() for match in self.matchs_list],
+            "name": self.name,
+            "start_date": self.start_time,
+            "end_date": self.end_time,
         }
