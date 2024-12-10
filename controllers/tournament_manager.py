@@ -115,10 +115,14 @@ class TournamentManager:
             )
             return
 
-        # TODO if not pair return error
+        if (
+            tournament["rounds_list"] != []
+            and tournament["rounds_list"][-1]["end_date"] is None
+        ):
+            print_error("Le tour n'est pas encore terminé !")
+            return
 
-        # TODO if less then 4 players return error
-
+        # TODO sort by score
         matches_list = []
         for index in range(0, len(players_list), 2):
             matches_list.append(
@@ -130,28 +134,54 @@ class TournamentManager:
                 )
             )
 
+        tournament["current_round"] += 1
+
         # create 1st round
         round = Round(
             matchs_list=matches_list,
-            name="Round 1",
+            name=f"Round {tournament['current_round']}",
             start_time=datetime.now(),
             end_time=None,
         )
 
         tournament_name = tournament["name"]
 
-        tournament["current_round"] = 1
         tournament["rounds_list"].append(round.to_dict())
         tournaments_table.update(tournament, Query().name == tournament_name)
 
         print_success(
-            f"Round 1 created for tournament '{tournament_name}' successfully!"
+            f"{round.name} created for tournament '{tournament_name}' successfully!"
         )
 
     def add_results_for_the_round(self, tournament):
-        print(f"Current round is {tournament['current_round']}")
+        print(f"\n Current round is {tournament['current_round']}")
 
-        # TODO check that end_time is None
+        for match in tournament["rounds_list"][-1]["matches_list"]:
+            player1_id = match[0][0]
+            player2_id = match[1][0]
+
+            print(f"Qui a gagné {player1_id} ou {player2_id}\n")
+            print(f"1. {player1_id}")
+            print(f"2. {player2_id}")
+            print("3. Egalité")
+            choice = input_choice("Votre choix: ")
+
+            if choice == "1":
+                match[0][1] = 1
+                match[1][1] = 0
+            elif choice == "2":
+                match[0][1] = 0
+                match[1][1] = 1
+            elif choice == "3":
+                match[0][1] = 0.5
+                match[1][1] = 0.5
+
+        tournament["rounds_list"][-1]["end_date"] = datetime.now().strftime(
+            "%Y-%m-%d %H:%M"
+        )
+
+        tournaments_table.update(tournament, Query().name == tournament["name"])
+        print_success("Résultats ajoutés avec succès !")
 
     def run(self):
         while True:
