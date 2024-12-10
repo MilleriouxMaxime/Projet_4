@@ -1,11 +1,13 @@
-from models.tournament import Tournament
-from utils.db import tournaments_table, players_table
-from tinydb import Query
-from colorama import Fore, Style
-from models.round import Round
-from models.round import Match
-
+import random
+from collections import defaultdict
 from datetime import datetime
+
+from colorama import Fore, Style
+from tinydb import Query
+
+from models.round import Match, Round
+from models.tournament import Tournament
+from utils.db import players_table, tournaments_table
 
 
 def print_error(message):
@@ -122,7 +124,32 @@ class TournamentManager:
             print_error("Le tour n'est pas encore terminé !")
             return
 
-        # TODO sort by score
+        if tournament["rounds_list"] == []:
+            random.shuffle(players_list)
+        else:
+            players_scores = defaultdict(float)
+
+            for round in tournament["rounds_list"]:
+                for match in round["matches_list"]:
+                    for player_id, score in match:
+                        players_scores[player_id] += score
+
+            # print(players_scores)
+            # {
+            #     "AB12345": 2.0,
+            #     "CD67890": 2.5,
+            #     "EF12345": 1.0,
+            #     "GH67890": 2.5,
+            #     "IJ12345": 3.0,
+            #     "KL67890": 1.0,
+            # }
+            players_list = [
+                key
+                for key, _ in sorted(
+                    players_scores.items(), key=lambda item: item[1], reverse=True
+                )
+            ]
+
         matches_list = []
         for index in range(0, len(players_list), 2):
             matches_list.append(
