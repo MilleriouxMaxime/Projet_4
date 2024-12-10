@@ -1,13 +1,14 @@
 from models.match import Match
+from datetime import datetime
 
 
 class Round:
     def __init__(
         self,
         matchs_list: list[Match],
-        name,
-        start_time,
-        end_time,
+        name: str,
+        start_time: datetime,
+        end_time: datetime,
     ):
         self.matchs_list = matchs_list
         self.name = name
@@ -19,8 +20,8 @@ class Round:
 
     def to_dict(self):
         return {
-            "matches": [match.to_dict() for match in self.matchs_list],
+            "matches_list": [match.to_dict() for match in self.matchs_list],
             "name": self.name,
-            "start_date": self.start_time,
+            "start_date": self.start_time.strftime("%Y-%m-%d %H:%M"),
             "end_date": self.end_time,
         }

@@ -17,13 +17,30 @@ def main():
 
     # player4 = Player("Green", "Stephane", "10/02/1991", "GH67890")
 
-    # match1 = Match(player1, 0, player2, 0)
+    # match1 = Match(player1.identifier, 0, player2.identifier, 0)
 
-    # match2 = Match(player3, 0, player4, 0)
+    # match2 = Match(player3.identifier, 0, player4.identifier, 0)
 
-    # round1 = Round([match1, match2], 1, "05/08/2023", "05/08/2023")
+    # match3 = Match(player1.identifier, 0, player3.identifier, 0)
 
-    # print(round1.to_dict())
+    # match4 = Match(player2.identifier, 0, player4.identifier, 0)
+
+    # round1 = Round([match1, match2], "Round 1", "05/08/2023", "05/08/2023")
+    # round2 = Round([match3, match4], "Round 2", "05/08/2023", "05/08/2023")
+
+    # tournament1 = Tournament(
+    #     "Tournoi de Paris",
+    #     "Paris",
+    #     "05/08/2023",
+    #     "05/08/2023",
+    #     0,
+    #     [round1, round2],
+    #     [],
+    #     "Tournoi de tennis",
+    #     2,
+    # )
+
+    # print(tournament1.to_dict())
 
     menu_manager = MenuManager()
     menu_manager.run()
