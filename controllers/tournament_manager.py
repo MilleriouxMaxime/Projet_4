@@ -32,12 +32,18 @@ class TournamentManager:
         """
         Création d'un tournoi
         """
-        name = input("Enter tournament name: ")
-        place = input("Enter tournament place: ")
-        start_date = input("Enter tournament start date: ")
-        end_date = input("Enter tournament end date: ")
-        total_round_number = input("Enter tournament total round number: ")
-        description = input("Enter tournament description: ")
+        name = input_choice("Saisissez le nom du tournoi: ")
+        if name == "q":
+            print_error("Un tournoi ne peut pas s'appeler 'q'")
+            return
+        place = input_choice("Saisissez le lieu du tournoi: ")
+        start_date = input_choice("Saisissez la date de début du tournoi: ")
+        # TODO: vérifier format de date
+        end_date = input_choice("Saisissez la date de fin du tournoi: ")
+        total_round_number = input_choice(
+            "Saisissez le nombre total de tours du tournoi: "
+        )
+        description = input_choice("Saisissez la description du tournoi: ")
 
         tournament = Tournament(
             name,
@@ -53,13 +59,19 @@ class TournamentManager:
 
         tournaments_table.insert(tournament.to_dict())
 
-        print_success(f"Tournament '{tournament.name}' created successfully!")
+        print_success(f"Tournament '{tournament.name}' a été créé avec succès !")
 
     def subscribe_players_to_tournament(self, tournament):
         """
         Inscription d'un joueur à un tournoi en utilisant son ID pour le retrouver dans la base de données
         """
-        player_id = input("Enter player ID: ")
+        player_id = input_choice(
+            "Saisissez l'ID du joueur (ou tapez 'q' pour annuler la saisie.): "
+        )
+
+        if player_id == "q":
+            return
+
         # Check if player exist
         player = players_table.get(Query().identifier == player_id)
 
@@ -80,7 +92,12 @@ class TournamentManager:
         Désinscription d'un joueur à un tournoi en utilisant son ID pour le retrouver dans la base de données
         """
 
-        player_id = input("Enter player ID: ")
+        player_id = input_choice(
+            "Saisissez l'ID du joueur (ou tapez 'q' pour annuler la saisie.): "
+        )
+
+        if player_id == "q":
+            return
         # Check if player exist
         player = players_table.get(Query().identifier == player_id)
 
@@ -181,16 +198,19 @@ class TournamentManager:
         )
 
     def add_results_for_the_round(self, tournament):
-        print(f"\n Current round is {tournament['current_round']}")
+        print_title(f"♟️ Round {tournament['current_round']} ♟️")
 
         for match in tournament["rounds_list"][-1]["matches_list"]:
             player1_id = match[0][0]
             player2_id = match[1][0]
 
-            print(f"Qui a gagné {player1_id} ou {player2_id}\n")
+            print(
+                f"\n{Fore.YELLOW}Qui a gagné ? {player1_id} ou {player2_id} :{Style.RESET_ALL}\n"
+            )
             print(f"1. {player1_id}")
             print(f"2. {player2_id}")
             print("3. Egalité")
+            print("q. Quitter")
             choice = input_choice("Votre choix: ")
 
             if choice == "1":
@@ -202,6 +222,8 @@ class TournamentManager:
             elif choice == "3":
                 match[0][1] = 0.5
                 match[1][1] = 0.5
+            elif choice == "q":
+                return
 
         tournament["rounds_list"][-1]["end_date"] = datetime.now().strftime(
             "%Y-%m-%d %H:%M"
@@ -225,21 +247,27 @@ class TournamentManager:
                 break
 
     def manage_tournament(self):
-        print_title("♟️  Gérer un tournoi ♟️ \n")
-        tournament_name = input("Enter tournament name: ")
-        # Check if tournament exist
+        print_title("♟️  Gérer un tournoi ♟️")
+
+        tournament_name = input_choice(
+            "Saisissez le nom du tournoi (ou tapez 'q' pour annuler la saisie): "
+        )
+
+        if tournament_name == "q":
+            return
+            # Check if tournament exist
         tournament = tournaments_table.get(Query().name == tournament_name)
 
         if tournament is None:
-            print_error(f"Tournament '{tournament_name}' not found!")
+            print_error(f"Tournoi '{tournament_name}' inexistant!")
             return
 
         while True:
             print_title(f"♟️  Tournoi '{tournament_name}' ♟️\n")
             print("1. Inscrire un joueur")
             print("2. Désinscrire un joueur")
-            print("3. Commencer le prochain tour")
-            print("4. Ajouter les résultats du tour")
+            print("3. Ajouter les résultats du tour")
+            print("4. Commencer le prochain tour")
             print("q. Quitter")
             choice = input_choice("Votre choix: ")
             if choice == "1":
@@ -247,9 +275,9 @@ class TournamentManager:
             elif choice == "2":
                 self.unsubscribe_players_from_tournament(tournament)
             elif choice == "3":
-                self.start_next_round(tournament)
-            elif choice == "4":
                 self.add_results_for_the_round(tournament)
+            elif choice == "4":
+                self.start_next_round(tournament)
 
             elif choice == "q":
                 break
