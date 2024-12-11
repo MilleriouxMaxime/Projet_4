@@ -8,22 +8,8 @@ from tinydb import Query
 from models.round import Match, Round
 from models.tournament import Tournament
 from utils.db import players_table, tournaments_table
-
-
-def print_error(message):
-    print("\n ⚠️  " + Fore.RED + message + Style.RESET_ALL + "⚠️")
-
-
-def print_success(message):
-    print("\n \u2705 " + Fore.GREEN + message + Style.RESET_ALL + "\u2705")
-
-
-def print_title(message):
-    print("\n" + Fore.MAGENTA + message + Style.RESET_ALL)
-
-
-def input_choice(message):
-    return input("\n" + Fore.CYAN + message + Style.RESET_ALL)
+from utils.formating import (input_choice, print_error, print_success,
+                             print_tornament_title)
 
 
 class TournamentManager:
@@ -66,7 +52,7 @@ class TournamentManager:
         Inscription d'un joueur à un tournoi en utilisant son ID pour le retrouver dans la base de données
         """
         player_id = input_choice(
-            "Saisissez l'ID du joueur (ou tapez 'q' pour annuler la saisie.): "
+            "Saisissez l'ID du joueur à inscrire (ou tapez 'q' pour annuler la saisie.): "
         )
 
         if player_id == "q":
@@ -76,7 +62,7 @@ class TournamentManager:
         player = players_table.get(Query().identifier == player_id)
 
         if player is None:
-            print_error(f"Player '{player_id}' not found!")
+            print_error(f"Joueur '{player_id}' n'existe pas !")
             return
 
         tournament_name = tournament["name"]
@@ -121,11 +107,10 @@ class TournamentManager:
 
     def start_next_round(self, tournament):
         players_list = tournament["players_list"]
-        # ["ED1234", "AZ8797", "AZ8791", "AZ8792", "AZ8793", "AZ8794"]
 
-        if len(players_list) < 4:
+        if len(players_list) < 2:
             print_error(
-                "Le nombre de joueurs inscrits doit être au moins 4 pour commencer un tour !"
+                "Le nombre de joueurs inscrits doit être au moins 2 pour commencer un tour !"
             )
             return
         if len(players_list) % 2 != 0:
@@ -198,7 +183,7 @@ class TournamentManager:
         )
 
     def add_results_for_the_round(self, tournament):
-        print_title(f"♟️ Round {tournament['current_round']} ♟️")
+        print_tornament_title(f"Round {tournament['current_round']}")
 
         for match in tournament["rounds_list"][-1]["matches_list"]:
             player1_id = match[0][0]
@@ -234,7 +219,7 @@ class TournamentManager:
 
     def run(self):
         while True:
-            print_title("♟️  Gestion des tournois ♟️ \n")
+            print_tornament_title("Gestion des tournois")
             print("1. Créer un tournoi")
             print("2. Gérer un tournoi")
             print("q. Quitter")
@@ -247,7 +232,7 @@ class TournamentManager:
                 break
 
     def manage_tournament(self):
-        print_title("♟️  Gérer un tournoi ♟️")
+        print_tornament_title("Gérer un tournoi")
 
         tournament_name = input_choice(
             "Saisissez le nom du tournoi (ou tapez 'q' pour annuler la saisie): "
@@ -263,7 +248,7 @@ class TournamentManager:
             return
 
         while True:
-            print_title(f"♟️  Tournoi '{tournament_name}' ♟️\n")
+            print_tornament_title(f"Tournoi '{tournament_name}'")
             print("1. Inscrire un joueur")
             print("2. Désinscrire un joueur")
             print("3. Ajouter les résultats du tour")
