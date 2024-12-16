@@ -1,8 +1,5 @@
-from tinydb import TinyDB, Query
+from tinydb import Query, TinyDB
 
 # Initialiser la base de données
-db = TinyDB("db.json")
-
-# Tables pour tournois et joueurs
-tournaments_table = db.table("Tournaments")
-players_table = db.table("Players")
+db_tournaments = TinyDB("db_tournaments.json")
+db_players = TinyDB("db_players.json")

@@ -3,7 +3,7 @@ from datetime import datetime
 from tinydb import Query
 
 from models.player import Player
-from utils.db import players_table
+from utils.db import db_players
 from utils.formating import input_choice, print_error, print_player_title, print_success
 
 
@@ -79,9 +79,7 @@ class PlayerController:
                 continue
 
             player_query = Query()
-            existing_player = players_table.search(
-                player_query.identifier == identifier
-            )
+            existing_player = db_players.search(player_query.identifier == identifier)
 
             if existing_player:
                 print_error(
@@ -92,7 +90,7 @@ class PlayerController:
             break
 
         player_query = Query()
-        existing_player = players_table.search(player_query.identifier == identifier)
+        existing_player = db_players.search(player_query.identifier == identifier)
 
         if existing_player:
             print_error(
@@ -106,7 +104,7 @@ class PlayerController:
             birth_date,
             identifier,
         )
-        players_table.insert(player.to_dict())
+        db_players.insert(player.to_dict())
         print_success(f"Joueur {identifier} a été ajouté avec succès !")
 
     def remove_player(self):
@@ -118,7 +116,7 @@ class PlayerController:
             identifier_to_remove = input_choice(
                 "Saisissez l'ID du joueur à supprimer (ou tapez 'q' pour annuler la saisie.): "
             )
-            player = players_table.get(Query().identifier == identifier_to_remove)
+            player = db_players.get(Query().identifier == identifier_to_remove)
 
             if identifier_to_remove == "q":
                 return
@@ -143,7 +141,7 @@ class PlayerController:
             return
         if confirmation == "o":
 
-            players_table.remove(Query().identifier == identifier_to_remove)
+            db_players.remove(Query().identifier == identifier_to_remove)
             print_success(f"Joueur '{identifier_to_remove}' supprimé avec succès !")
 
     def run(self):

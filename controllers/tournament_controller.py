@@ -7,7 +7,7 @@ from tinydb import Query
 
 from models.round import Match, Round
 from models.tournament import Tournament
-from utils.db import players_table, tournaments_table
+from utils.db import db_players, db_tournaments
 from utils.formating import (
     input_choice,
     print_error,
@@ -47,7 +47,7 @@ class TournamentController:
             total_round_number,
         )
 
-        tournaments_table.insert(tournament.to_dict())
+        db_tournaments.insert(tournament.to_dict())
 
         print_success(f"Tournament '{tournament.name}' a été créé avec succès !")
 
@@ -63,7 +63,7 @@ class TournamentController:
             return
 
         # Check if player exist
-        player = players_table.get(Query().identifier == player_id)
+        player = db_players.get(Query().identifier == player_id)
 
         if player is None:
             print_error(f"Joueur '{player_id}' n'existe pas !")
@@ -71,7 +71,7 @@ class TournamentController:
 
         tournament_name = tournament["name"]
         tournament["players_list"].append(player_id)
-        tournaments_table.update(tournament, Query().name == tournament_name)
+        db_tournaments.update(tournament, Query().name == tournament_name)
 
         print_success(
             f"Player '{player_id}' subscribed to tournament '{tournament_name}' successfully!"
@@ -89,7 +89,7 @@ class TournamentController:
         if player_id == "q":
             return
         # Check if player exist
-        player = players_table.get(Query().identifier == player_id)
+        player = db_players.get(Query().identifier == player_id)
 
         if player is None:
             print_error(f"Player '{player_id}' not found!")
@@ -103,7 +103,7 @@ class TournamentController:
             return
 
         tournament["players_list"].remove(player_id)
-        tournaments_table.update(tournament, Query().name == tournament_name)
+        db_tournaments.update(tournament, Query().name == tournament_name)
 
         print_success(
             f"Player '{player_id}' unsubscribed from tournament '{tournament_name}' successfully!"
@@ -180,7 +180,7 @@ class TournamentController:
         tournament_name = tournament["name"]
 
         tournament["rounds_list"].append(round.to_dict())
-        tournaments_table.update(tournament, Query().name == tournament_name)
+        db_tournaments.update(tournament, Query().name == tournament_name)
 
         print_success(
             f"{round.name} created for tournament '{tournament_name}' successfully!"
@@ -218,7 +218,7 @@ class TournamentController:
             "%Y-%m-%d %H:%M"
         )
 
-        tournaments_table.update(tournament, Query().name == tournament["name"])
+        db_tournaments.update(tournament, Query().name == tournament["name"])
         print_success("Résultats ajoutés avec succès !")
 
     def run(self):
@@ -237,19 +237,22 @@ class TournamentController:
 
     def manage_tournament(self):
         print_tornament_title("Gérer un tournoi")
+        # print all the tournaments names
+        tournaments = db_tournaments.all()
+        print("Liste des tournois :\n")
+        for index, tournament in enumerate(tournaments):
+            print(f"{index + 1}. {tournament['name']}")
+        print("q. Quitter")
 
-        tournament_name = input_choice(
-            "Saisissez le nom du tournoi (ou tapez 'q' pour annuler la saisie): "
+        tournament_index = input_choice(
+            "Choisissez le tournoi que vous souhaitez gérer :  "
         )
 
-        if tournament_name == "q":
+        if tournament_index == "q":
             return
-            # Check if tournament exist
-        tournament = tournaments_table.get(Query().name == tournament_name)
 
-        if tournament is None:
-            print_error(f"Tournoi '{tournament_name}' inexistant!")
-            return
+        tournament = tournaments[int(tournament_index) - 1]
+        tournament_name = tournament["name"]
 
         while True:
             print_tornament_title(f"Tournoi '{tournament_name}'")
