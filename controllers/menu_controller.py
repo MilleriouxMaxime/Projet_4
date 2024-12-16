@@ -1,10 +1,14 @@
 from colorama import Fore, Style
 
-from controllers.player_manager import PlayerManager
-from controllers.tournament_manager import TournamentManager, input_choice, print_error
+from controllers.player_controller import PlayerController
+from controllers.tournament_controller import (
+    TournamentController,
+    input_choice,
+    print_error,
+)
 
 
-class MenuManager:
+class MenuController:
 
     def run(self):
         while True:
@@ -14,10 +18,10 @@ class MenuManager:
             choice = input_choice("Votre choix: ")
 
             if choice == "1":
-                tournament_manager = TournamentManager()
+                tournament_manager = TournamentController()
                 tournament_manager.run()
             elif choice == "2":
-                player_manager = PlayerManager()
+                player_manager = PlayerController()
                 player_manager.run()
             elif choice == "q":
                 break

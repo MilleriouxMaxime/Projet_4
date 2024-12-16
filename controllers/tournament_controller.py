@@ -8,11 +8,15 @@ from tinydb import Query
 from models.round import Match, Round
 from models.tournament import Tournament
 from utils.db import players_table, tournaments_table
-from utils.formating import (input_choice, print_error, print_success,
-                             print_tornament_title)
+from utils.formating import (
+    input_choice,
+    print_error,
+    print_success,
+    print_tornament_title,
+)
 
 
-class TournamentManager:
+class TournamentController:
 
     def create_tournament(self):
         """

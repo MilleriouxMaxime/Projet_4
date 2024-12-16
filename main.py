@@ -1,10 +1,10 @@
-from models.player import Player
-from models.tournament import Tournament
+from controllers.menu_controller import MenuController
+from controllers.player_controller import PlayerController
+from controllers.tournament_controller import TournamentController
 from models.match import Match
+from models.player import Player
 from models.round import Round
-from controllers.tournament_manager import TournamentManager
-from controllers.player_manager import PlayerManager
-from controllers.menu_manager import MenuManager
+from models.tournament import Tournament
 
 
 def main():
@@ -42,7 +42,7 @@ def main():
 
     # print(tournament1.to_dict())
 
-    menu_manager = MenuManager()
+    menu_manager = MenuController()
     menu_manager.run()
 
 
