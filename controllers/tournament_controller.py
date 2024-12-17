@@ -236,24 +236,24 @@ class TournamentController:
                 break
 
     def manage_tournament(self):
-        print_tornament_title("Gérer un tournoi")
-        # print all the tournaments names
-        tournaments = db_tournaments.all()
-        print("Liste des tournois :\n")
-        for index, tournament in enumerate(tournaments):
-            print(f"{index + 1}. {tournament['name']}")
-        print("q. Quitter")
+        while True:
+            print_tornament_title("Gérer un tournoi")
+            # print all the tournaments names
+            tournaments = db_tournaments.all()
+            for index, tournament in enumerate(tournaments):
+                print(f"{index + 1}. {tournament['name']}")
+            print("q. Quitter")
 
-        tournament_index = input_choice(
-            "Choisissez le tournoi que vous souhaitez gérer :  "
-        )
+            tournament_index = input_choice("Votre choix: ")
 
-        if tournament_index == "q":
-            return
+            if tournament_index == "q":
+                return
 
-        tournament = tournaments[int(tournament_index) - 1]
+            tournament = tournaments[int(tournament_index) - 1]
+            self.manage_selected_tournament(tournament)
+
+    def manage_selected_tournament(self, tournament):
         tournament_name = tournament["name"]
-
         while True:
             print_tornament_title(f"Tournoi '{tournament_name}'")
             print("1. Inscrire un joueur")
