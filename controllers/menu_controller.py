@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 
 from controllers.player_controller import PlayerController
+from controllers.rapports_controller import RapportsController
 from controllers.tournament_controller import (
     TournamentController,
     input_choice,
@@ -14,6 +15,7 @@ class MenuController:
         while True:
             print("\n1. Gestion des tournois")
             print("2. Gestion des joueurs")
+            print("3. Rapports")
             print("q. Quitter")
             choice = input_choice("Votre choix: ")
 
@@ -23,6 +25,9 @@ class MenuController:
             elif choice == "2":
                 player_manager = PlayerController()
                 player_manager.run()
+            elif choice == "3":
+                reports_manager = RapportsController()
+                reports_manager.run()
             elif choice == "q":
                 break
             else:

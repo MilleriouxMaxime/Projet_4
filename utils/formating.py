@@ -2,7 +2,7 @@ from colorama import Fore, Style
 
 
 def print_error(message):
-    print("\n ⚠️" + Fore.RED + message + Style.RESET_ALL + "⚠️\n")
+    print("\n ⚠️  " + Fore.RED + message + Style.RESET_ALL + "⚠️\n")
 
 
 def print_success(message):
@@ -15,6 +15,10 @@ def print_tornament_title(message):
 
 def print_player_title(message):
     print("\n 🧑‍💻 " + Fore.MAGENTA + message + Style.RESET_ALL + "🧑‍💻\n")
+
+
+def print_rapport_title(message):
+    print("\n 📊 " + Fore.MAGENTA + message + Style.RESET_ALL + "📊\n")
 
 
 def input_choice(message):
