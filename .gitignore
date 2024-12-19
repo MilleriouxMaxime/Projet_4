@@ -161,7 +161,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-db.json
+db_players.json
+db_tournaments.json
 todolist.txt
 Exemples/*
-todolist.txt
