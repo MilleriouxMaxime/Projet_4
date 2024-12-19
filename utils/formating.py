@@ -6,7 +6,7 @@ def print_error(message):
 
 
 def print_success(message):
-    print("\n ✅" + Fore.GREEN + message + Style.RESET_ALL + "✅\n")
+    print("\n ✅  " + Fore.GREEN + message + Style.RESET_ALL + "✅\n")
 
 
 def print_tornament_title(message):

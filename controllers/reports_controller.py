@@ -73,7 +73,7 @@ class ReportsController:
 
         tournament_name = tournaments[int(tournament_index) - 1]["name"]
         tournament = db_tournaments.get(Query().name == tournament_name)
-
+        print()
         # print player list propretly
         for player_id in tournament["players_list"]:
             player = db_players.get(Query().identifier == player_id)
@@ -101,7 +101,7 @@ class ReportsController:
         tournament = db_tournaments.get(Query().name == tournament_name)
 
         for round_ in tournament["rounds_list"]:
-            print(f"\nRound {round_['name']}\n")
+            print(f"\n{round_['name']}\n")
             for match in round_["matches_list"]:
                 player1 = db_players.get(Query().identifier == match[0][0])
                 player2 = db_players.get(Query().identifier == match[1][0])
