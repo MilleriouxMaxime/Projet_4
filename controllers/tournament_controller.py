@@ -5,6 +5,7 @@ from datetime import datetime
 from colorama import Fore, Style
 from tinydb import Query
 
+from controllers.player_controller import ask_for_input
 from models.round import Match, Round
 from models.tournament import Tournament
 from utils.db import db_players, db_tournaments
@@ -22,18 +23,34 @@ class TournamentController:
         """
         Création d'un tournoi
         """
-        name = input_choice("Saisissez le nom du tournoi: ")
-        if name == "q":
-            print_error("Un tournoi ne peut pas s'appeler 'q'")
+        print_tornament_title("Création d'un tournoi")
+        try:
+            name = ask_for_input(
+                "Saisissez le nom du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
+                None,
+            )
+            place = ask_for_input(
+                "Saisissez le lieu du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
+                None,
+            )
+            start_date = ask_for_input(
+                "Saisissez la date de début du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
+                "date",
+            )
+            end_date = ask_for_input(
+                "Saisissez la date de fin du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
+                "date",
+            )
+            total_round_number = ask_for_input(
+                "Saisissez le nombre total de tours du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
+                "round",
+            )
+            description = ask_for_input(
+                "Saisissez la description du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
+                None,
+            )
+        except KeyboardInterrupt:
             return
-        place = input_choice("Saisissez le lieu du tournoi: ")
-        start_date = input_choice("Saisissez la date de début du tournoi: ")
-        # TODO: vérifier format de date
-        end_date = input_choice("Saisissez la date de fin du tournoi: ")
-        total_round_number = input_choice(
-            "Saisissez le nombre total de tours du tournoi: "
-        )
-        description = input_choice("Saisissez la description du tournoi: ")
 
         tournament = Tournament(
             name,
@@ -55,14 +72,14 @@ class TournamentController:
         """
         Inscription d'un joueur à un tournoi en utilisant son ID pour le retrouver dans la base de données
         """
-        player_id = input_choice(
-            "Saisissez l'ID du joueur à inscrire (ou tapez 'q' pour annuler la saisie.): "
-        )
-
-        if player_id == "q":
+        try:
+            player_id = ask_for_input(
+                "Saisissez l'ID du joueur à inscrire (ou tapez 'q' pour annuler la saisie.): ",
+                "identifier",
+            )
+        except KeyboardInterrupt:
             return
 
-        # Check if player exist
         player = db_players.get(Query().identifier == player_id)
 
         if player is None:
@@ -82,12 +99,14 @@ class TournamentController:
         Désinscription d'un joueur à un tournoi en utilisant son ID pour le retrouver dans la base de données
         """
 
-        player_id = input_choice(
-            "Saisissez l'ID du joueur (ou tapez 'q' pour annuler la saisie.): "
-        )
-
-        if player_id == "q":
+        try:
+            player_id = ask_for_input(
+                "Saisissez l'ID du joueur à inscrire (ou tapez 'q' pour annuler la saisie.): ",
+                "identifier",
+            )
+        except KeyboardInterrupt:
             return
+
         # Check if player exist
         player = db_players.get(Query().identifier == player_id)
 
@@ -200,7 +219,14 @@ class TournamentController:
             print(f"2. {player2_id}")
             print("3. Egalité")
             print("q. Quitter")
-            choice = input_choice("Votre choix: ")
+            try:
+
+                choice = ask_for_input(
+                    "Votre choix: ",
+                    "integer",
+                )
+            except KeyboardInterrupt:
+                return
 
             if choice == "1":
                 match[0][1] = 1
@@ -211,8 +237,6 @@ class TournamentController:
             elif choice == "3":
                 match[0][1] = 0.5
                 match[1][1] = 0.5
-            elif choice == "q":
-                return
 
         tournament["rounds_list"][-1]["end_date"] = datetime.now().strftime(
             "%Y-%m-%d %H:%M"
@@ -222,18 +246,20 @@ class TournamentController:
         print_success("Résultats ajoutés avec succès !")
 
     def run(self):
-        while True:
-            print_tornament_title("Gestion des tournois")
-            print("1. Créer un tournoi")
-            print("2. Gérer un tournoi")
-            print("q. Quitter")
-            choice = input_choice("Votre choix: ")
+        print_tornament_title("Gestion des tournois")
+        menu = """1. Créer un tournoi
+2. Gérer un tournoi
+q. Quitter
+
+Votre choix: """
+        try:
+            choice = ask_for_input(menu, "integer")
             if choice == "1":
                 self.create_tournament()
             elif choice == "2":
                 self.manage_tournament()
-            elif choice == "q":
-                break
+        except KeyboardInterrupt:
+            return
 
     def manage_tournament(self):
         while True:

@@ -34,6 +34,25 @@ def identifier_is_valid(choice: str):
     return True
 
 
+def integer_is_valid(choice: str):
+    if not choice.isdigit():
+        print_error("Le choix doit être un entier.")
+        return False
+    return True
+
+
+def round_is_valid(choice: str):
+    if not integer_is_valid(choice):
+        return False
+    choice = int(choice)
+    if choice <= 0 or choice > 10:
+        print_error(
+            "Le nombre de tour ne peut pas être 0 ou inférieur et ne peut pas dépasser 10."
+        )
+        return False
+    return True
+
+
 def choice_is_valid(choice, input_type):
     if input_type == "name":
         return name_is_valid(choice)
@@ -41,6 +60,10 @@ def choice_is_valid(choice, input_type):
         return date_is_valid(choice)
     elif input_type == "identifier":
         return identifier_is_valid(choice)
+    elif input_type == "integer":
+        return integer_is_valid(choice)
+    elif input_type == "round":
+        return round_is_valid(choice)
     return True
 
 
@@ -62,11 +85,11 @@ class PlayerController:
         print_player_title("Création de joueur")
         try:
             last_name = ask_for_input(
-                "Saisissez le nom du joueur ou tapez 'q' pour quitter la création de joueur): ",
+                "Saisissez le nom du joueur (ou tapez 'q' pour quitter la création de joueur): ",
                 "name",
             )
             first_name = ask_for_input(
-                "Saisissez le prénom du joueur ou tapez 'q' pour quitter la création de joueur): ",
+                "Saisissez le prénom du joueur (ou tapez 'q' pour quitter la création de joueur): ",
                 "name",
             )
 
