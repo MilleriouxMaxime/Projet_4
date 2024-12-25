@@ -2,78 +2,52 @@ import random
 from collections import defaultdict
 from datetime import datetime
 
-from colorama import Fore, Style
 from tinydb import Query
 
-from controllers.player_controller import ask_for_input
 from models.round import Match, Round
 from models.tournament import Tournament
 from utils.db import db_players, db_tournaments
-from utils.formating import (
-    input_choice,
-    print_error,
-    print_success,
-    print_tornament_title,
-)
+from views.tournament_view import TournamentView
 
 
 class TournamentController:
+    def __init__(self, view: TournamentView):
+        self.view = view
 
     def create_tournament(self):
         """
         Création d'un tournoi
         """
-        print_tornament_title("Création d'un tournoi")
+        self.view.display_tournament_title("Création d'un tournoi")
         try:
-            name = ask_for_input(
-                "Saisissez le nom du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
-                None,
-            )
-            place = ask_for_input(
-                "Saisissez le lieu du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
-                None,
-            )
-            start_date = ask_for_input(
-                "Saisissez la date de début du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
-                "date",
-            )
-            end_date = ask_for_input(
-                "Saisissez la date de fin du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
-                "date",
-            )
-            total_round_number = ask_for_input(
-                "Saisissez le nombre total de tours du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
-                "round",
-            )
-            description = ask_for_input(
-                "Saisissez la description du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
-                None,
-            )
+            infos = self.view.get_tournament_infos()
         except KeyboardInterrupt:
             return
 
         tournament = Tournament(
-            name,
-            place,
-            start_date,
-            end_date,
+            infos["name"],
+            infos["place"],
+            infos["start_date"],
+            infos["end_date"],
             0,
             [],
             [],
-            description,
-            total_round_number,
+            infos["description"],
+            infos["total_round_number"],
         )
 
         db_tournaments.insert(tournament.to_dict())
 
-        print_success(f"Tournament '{tournament.name}' a été créé avec succès !")
+        self.view.display_success(
+            f"Tournament '{tournament.name}' a été créé avec succès !"
+        )
 
     def subscribe_players_to_tournament(self, tournament):
         """
         Inscription d'un joueur à un tournoi en utilisant son ID pour le retrouver dans la base de données
         """
         try:
-            player_id = ask_for_input(
+            player_id = self.view.ask_for_input(
                 "Saisissez l'ID du joueur à inscrire (ou tapez 'q' pour annuler la saisie.): ",
                 "identifier",
             )
@@ -83,14 +57,14 @@ class TournamentController:
         player = db_players.get(Query().identifier == player_id)
 
         if player is None:
-            print_error(f"Joueur '{player_id}' n'existe pas !")
+            self.view.display_error(f"Joueur '{player_id}' n'existe pas !")
             return
 
         tournament_name = tournament["name"]
         tournament["players_list"].append(player_id)
         db_tournaments.update(tournament, Query().name == tournament_name)
 
-        print_success(
+        self.view.display_success(
             f"Player '{player_id}' subscribed to tournament '{tournament_name}' successfully!"
         )
 
@@ -100,7 +74,7 @@ class TournamentController:
         """
 
         try:
-            player_id = ask_for_input(
+            player_id = self.view.ask_for_input(
                 "Saisissez l'ID du joueur à inscrire (ou tapez 'q' pour annuler la saisie.): ",
                 "identifier",
             )
@@ -111,12 +85,12 @@ class TournamentController:
         player = db_players.get(Query().identifier == player_id)
 
         if player is None:
-            print_error(f"Player '{player_id}' not found!")
+            self.view.display_error(f"Player '{player_id}' not found!")
             return
 
         tournament_name = tournament["name"]
         if player_id not in tournament["players_list"]:
-            print_error(
+            self.view.display_error(
                 f"Player '{player_id}' not subscribed to tournament '{tournament_name}'!"
             )
             return
@@ -124,20 +98,24 @@ class TournamentController:
         tournament["players_list"].remove(player_id)
         db_tournaments.update(tournament, Query().name == tournament_name)
 
-        print_success(
+        self.view.display_success(
             f"Player '{player_id}' unsubscribed from tournament '{tournament_name}' successfully!"
         )
 
     def start_next_round(self, tournament):
+        if tournament["current_round"] == tournament["total_round_number"]:
+            self.view.display_error("Le tournoi est terminé !")
+            return
+
         players_list = tournament["players_list"]
 
         if len(players_list) < 2:
-            print_error(
+            self.view.display_error(
                 "Le nombre de joueurs inscrits doit être au moins 2 pour commencer un tour !"
             )
             return
         if len(players_list) % 2 != 0:
-            print_error(
+            self.view.display_error(
                 "Le nombre de joueurs inscrits doit être pair pour commencer un tour !"
             )
             return
@@ -146,7 +124,7 @@ class TournamentController:
             tournament["rounds_list"] != []
             and tournament["rounds_list"][-1]["end_date"] is None
         ):
-            print_error("Le tour n'est pas encore terminé !")
+            self.view.display_error("Le tour n'est pas encore terminé !")
             return
 
         if tournament["rounds_list"] == []:
@@ -159,15 +137,6 @@ class TournamentController:
                     for player_id, score in match:
                         players_scores[player_id] += score
 
-            # print(players_scores)
-            # {
-            #     "AB12345": 2.0,
-            #     "CD67890": 2.5,
-            #     "EF12345": 1.0,
-            #     "GH67890": 2.5,
-            #     "IJ12345": 3.0,
-            #     "KL67890": 1.0,
-            # }
             players_list = [
                 key
                 for key, _ in sorted(
@@ -188,7 +157,6 @@ class TournamentController:
 
         tournament["current_round"] += 1
 
-        # create 1st round
         round = Round(
             matchs_list=matches_list,
             name=f"Round {tournament['current_round']}",
@@ -201,30 +169,20 @@ class TournamentController:
         tournament["rounds_list"].append(round.to_dict())
         db_tournaments.update(tournament, Query().name == tournament_name)
 
-        print_success(
-            f"{round.name} created for tournament '{tournament_name}' successfully!"
-        )
+        self.view.display_success(f"{round.name} créé avec succès !")
+
+        tournament["status"] = "En cours"
+        db_tournaments.update(tournament, Query().name == tournament_name)
 
     def add_results_for_the_round(self, tournament):
-        print_tornament_title(f"Round {tournament['current_round']}")
+        self.view.display_tournament_title(f"Round {tournament['current_round']}")
 
         for match in tournament["rounds_list"][-1]["matches_list"]:
             player1_id = match[0][0]
             player2_id = match[1][0]
 
-            print(
-                f"\n{Fore.YELLOW}Qui a gagné ? {player1_id} ou {player2_id} :{Style.RESET_ALL}\n"
-            )
-            print(f"1. {player1_id}")
-            print(f"2. {player2_id}")
-            print("3. Egalité")
-            print("q. Quitter")
             try:
-
-                choice = ask_for_input(
-                    "Votre choix: ",
-                    "integer",
-                )
+                choice = self.view.get_match_results(player1_id, player2_id)
             except KeyboardInterrupt:
                 return
 
@@ -243,34 +201,28 @@ class TournamentController:
         )
 
         db_tournaments.update(tournament, Query().name == tournament["name"])
-        print_success("Résultats ajoutés avec succès !")
+        self.view.display_success("Résultats ajoutés avec succès !")
+        if tournament["current_round"] == tournament["total_round_number"]:
+            tournament["status"] = "Termine"
+            db_tournaments.update(tournament, Query().name == tournament["name"])
 
     def run(self):
-        print_tornament_title("Gestion des tournois")
-        menu = """1. Créer un tournoi
-2. Gérer un tournoi
-q. Quitter
-
-Votre choix: """
-        try:
-            choice = ask_for_input(menu, "integer")
+        while True:
+            self.view.display_tournament_title("Gestion des tournois")
+            choice = self.view.ask_for_options(["Créer un tournoi", "Gérer un tournoi"])
             if choice == "1":
                 self.create_tournament()
             elif choice == "2":
                 self.manage_tournament()
-        except KeyboardInterrupt:
-            return
+            elif choice == "q":
+                break
 
     def manage_tournament(self):
         while True:
-            print_tornament_title("Gérer un tournoi")
-            # print all the tournaments names
+            self.view.display_tournament_title("Gérer un tournoi")
             tournaments = db_tournaments.all()
-            for index, tournament in enumerate(tournaments):
-                print(f"{index + 1}. {tournament['name']}")
-            print("q. Quitter")
-
-            tournament_index = input_choice("Votre choix: ")
+            tournament_names = [tournament["name"] for tournament in tournaments]
+            tournament_index = self.view.ask_for_options(tournament_names)
 
             if tournament_index == "q":
                 return
@@ -281,13 +233,15 @@ Votre choix: """
     def manage_selected_tournament(self, tournament):
         tournament_name = tournament["name"]
         while True:
-            print_tornament_title(f"Tournoi '{tournament_name}'")
-            print("1. Inscrire un joueur")
-            print("2. Désinscrire un joueur")
-            print("3. Ajouter les résultats du tour")
-            print("4. Commencer le prochain tour")
-            print("q. Quitter")
-            choice = input_choice("Votre choix: ")
+            self.view.display_tournament_title(f"Tournoi '{tournament_name}'")
+            choice = self.view.ask_for_options(
+                [
+                    "Inscrire un joueur",
+                    "Désinscrire un joueur",
+                    "Ajouter les résultats du tour",
+                    "Commencer le prochain tour",
+                ]
+            )
             if choice == "1":
                 self.subscribe_players_to_tournament(tournament)
             elif choice == "2":

@@ -1,29 +1,31 @@
-from colorama import Fore, Style
-
 from controllers.player_controller import PlayerController
 from controllers.reports_controller import ReportsController
-from controllers.tournament_controller import (
-    TournamentController,
-    input_choice,
-    print_error,
-)
+from controllers.tournament_controller import TournamentController
+from views.base_view import BaseView
+from views.player_view import PlayerView
+from views.tournament_view import TournamentView
 
 
 class MenuController:
+    def __init__(self, view: BaseView):
+        self.view = view
 
     def run(self):
         while True:
-            print("\n1. Gestion des tournois")
-            print("2. Gestion des joueurs")
-            print("3. Rapports")
-            print("q. Quitter")
-            choice = input_choice("Votre choix: ")
-
+            choice = self.view.ask_for_options(
+                [
+                    "Gestion des tournois",
+                    "Gestion des joueurs",
+                    "Rapports",
+                ]
+            )
             if choice == "1":
-                tournament_manager = TournamentController()
+                tournament_view = TournamentView()
+                tournament_manager = TournamentController(tournament_view)
                 tournament_manager.run()
             elif choice == "2":
-                player_manager = PlayerController()
+                player_view = PlayerView()
+                player_manager = PlayerController(player_view)
                 player_manager.run()
             elif choice == "3":
                 reports_manager = ReportsController()
@@ -31,6 +33,6 @@ class MenuController:
             elif choice == "q":
                 break
             else:
-                print_error(
+                self.view.display_error(
                     "Attention, votre choix doit faire parti de la liste ci-dessous."
                 )

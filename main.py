@@ -5,6 +5,7 @@ from models.match import Match
 from models.player import Player
 from models.round import Round
 from models.tournament import Tournament
+from views.base_view import BaseView
 
 
 def main():
@@ -41,8 +42,9 @@ def main():
     # )
 
     # print(tournament1.to_dict())
+    view = BaseView()
 
-    menu_manager = MenuController()
+    menu_manager = MenuController(view)
     menu_manager.run()
 
 

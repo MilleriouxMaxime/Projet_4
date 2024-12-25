@@ -1,21 +1,18 @@
 from tinydb import Query
 
 from utils.db import db_players, db_tournaments
-from utils.formating import (
-    input_choice,
-    print_error,
-    print_rapport_title,
-    print_success,
-)
+from views.base_view import BaseView
 
 
 class ReportsController:
+    def __init__(self, view: BaseView):
+        self.view = view
 
     def list_of_players(self):
         """
         Afficher la liste des joueurs par ordre alphabétique
         """
-        print_rapport_title("Liste des joueurs")
+        self.view.display_rapport_title("Liste des joueurs")
         players = db_players.all()
         for player in sorted(players, key=lambda p: p["last_name"]):
             print(
@@ -26,7 +23,7 @@ class ReportsController:
         """
         Afficher la liste des tournois par ordre alphabétique
         """
-        print_rapport_title("Liste des tournois")
+        self.view.display_rapport_title("Liste des tournois")
         tournaments = db_tournaments.all()
         for tournament in sorted(tournaments, key=lambda t: t["name"]):
             print(f"{tournament['name']} - Lieu : {tournament['place']}")
@@ -36,7 +33,7 @@ class ReportsController:
         Afficher le nom et la date d'un tournoi
         """
         while True:
-            print_rapport_title("Nom et Dates d'un tournoi")
+            self.view.display_rapport_title("Nom et Dates d'un tournoi")
 
             tournaments = db_tournaments.all()
             for index, tournament in enumerate(tournaments):
@@ -59,7 +56,7 @@ class ReportsController:
         """
         Afficher la liste des ID de joueurs d'un tournoi
         """
-        print_rapport_title("Liste des joueurs d'un tournoi")
+        self.view.display_rapport_title("Liste des joueurs d'un tournoi")
         tournaments = db_tournaments.all()
 
         for index, tournament in enumerate(tournaments):
@@ -85,7 +82,7 @@ class ReportsController:
         """
         Afficher la liste des tours et matchs d'un tournoi
         """
-        print_rapport_title("Liste des tours et matchs d'un tournoi")
+        self.view.display_rapport_title("Liste des tours et matchs d'un tournoi")
         tournaments = db_tournaments.all()
 
         for index, tournament in enumerate(tournaments):
@@ -114,7 +111,7 @@ class ReportsController:
         Gestion des rapports
         """
         while True:
-            print_rapport_title("Rapports")
+            self.view.display_rapport_title("Rapports")
             print("1. Liste des joueurs")
             print("2. Liste des tournois")
             print("3. Nom et date d'un tournoi")
