@@ -14,10 +14,12 @@ class ReportsController:
         """
         self.view.display_rapport_title("Liste des joueurs")
         players = db_players.all()
+        players_list = []
         for player in sorted(players, key=lambda p: p["last_name"]):
-            print(
+            players_list.append(
                 f"{player['last_name']} {player['first_name']} - {player['identifier']}"
             )
+        self.view.display_list(players_list)
 
     def tournaments_list(self):
         """
@@ -25,8 +27,12 @@ class ReportsController:
         """
         self.view.display_rapport_title("Liste des tournois")
         tournaments = db_tournaments.all()
-        for tournament in sorted(tournaments, key=lambda t: t["name"]):
-            print(f"{tournament['name']} - Lieu : {tournament['place']}")
+        tournaments_list = []
+        for tournament in tournaments:
+            tournaments_list.append(
+                f"{tournament['name']} - Lieu : {tournament['place']}"
+            )
+        self.view.display_list(sorted(tournaments_list))
 
     def get_tournament_name_and_date(self):
         """
@@ -36,11 +42,8 @@ class ReportsController:
             self.view.display_rapport_title("Nom et Dates d'un tournoi")
 
             tournaments = db_tournaments.all()
-            for index, tournament in enumerate(tournaments):
-                print(f"{index + 1}. {tournament['name']}")
-            print("q. Quitter")
-
-            tournament_index = input_choice("Votre choix: ")
+            tournament_names = [tournament["name"] for tournament in tournaments]
+            tournament_index = self.view.ask_for_options(tournament_names)
 
             if tournament_index == "q":
                 return
@@ -48,48 +51,48 @@ class ReportsController:
             tournament_name = tournaments[int(tournament_index) - 1]["name"]
             tournament = db_tournaments.get(Query().name == tournament_name)
 
-            print(f"\nNom du tournoi : {tournament['name']}")
-            print(f"Date de début du tournoi : {tournament['start_date']}")
-            print(f"Date de fin du tournoi : {tournament['end_date']}")
+            self.view.display_list(
+                [
+                    f"Nom du tournoi : {tournament['name']}",
+                    f"Date de début du tournoi : {tournament['start_date']}",
+                    f"Date de fin du tournoi : {tournament['end_date']}",
+                ]
+            )
 
     def list_of_players_in_tournament(self):
         """
         Afficher la liste des ID de joueurs d'un tournoi
         """
         self.view.display_rapport_title("Liste des joueurs d'un tournoi")
+
         tournaments = db_tournaments.all()
-
-        for index, tournament in enumerate(tournaments):
-            print(f"{index + 1}. {tournament['name']}")
-        print("q. Quitter")
-
-        tournament_index = input_choice("Votre choix: ")
+        tournament_names = [tournament["name"] for tournament in tournaments]
+        tournament_index = self.view.ask_for_options(tournament_names)
 
         if tournament_index == "q":
             return
 
         tournament_name = tournaments[int(tournament_index) - 1]["name"]
         tournament = db_tournaments.get(Query().name == tournament_name)
-        print()
-        # print player list propretly
+
+        players_list = []
         for player_id in tournament["players_list"]:
             player = db_players.get(Query().identifier == player_id)
-            print(
+            players_list.append(
                 f"{player['last_name']} {player['first_name']} - {player['identifier']}"
             )
+
+        self.view.display_list(sorted(players_list))
 
     def list_of_rounds_and_matches_in_tournament(self):
         """
         Afficher la liste des tours et matchs d'un tournoi
         """
         self.view.display_rapport_title("Liste des tours et matchs d'un tournoi")
+
         tournaments = db_tournaments.all()
-
-        for index, tournament in enumerate(tournaments):
-            print(f"{index + 1}. {tournament['name']}")
-        print("q. Quitter")
-
-        tournament_index = input_choice("Votre choix: ")
+        tournament_names = [tournament["name"] for tournament in tournaments]
+        tournament_index = self.view.ask_for_options(tournament_names)
 
         if tournament_index == "q":
             return
@@ -97,14 +100,18 @@ class ReportsController:
         tournament_name = tournaments[int(tournament_index) - 1]["name"]
         tournament = db_tournaments.get(Query().name == tournament_name)
 
+        rounds_list = []
+
         for round_ in tournament["rounds_list"]:
-            print(f"\n{round_['name']}\n")
+            rounds_list.append(f"\n{round_['name']}\n")
             for match in round_["matches_list"]:
                 player1 = db_players.get(Query().identifier == match[0][0])
                 player2 = db_players.get(Query().identifier == match[1][0])
-                print(
+                rounds_list.append(
                     f"{player1['last_name']} {player1['first_name']} - {player2['last_name']} {player2['first_name']}"
                 )
+
+        self.view.display_list(rounds_list)
 
     def run(self):
         """
@@ -112,13 +119,16 @@ class ReportsController:
         """
         while True:
             self.view.display_rapport_title("Rapports")
-            print("1. Liste des joueurs")
-            print("2. Liste des tournois")
-            print("3. Nom et date d'un tournoi")
-            print("4. Liste des joueurs d'un tournoi")
-            print("5. Liste des tours et matchs d'un tournoi")
-            print("q. Quitter")
-            choice = input_choice("Votre choix: ")
+            choice = self.view.ask_for_options(
+                [
+                    "Liste des joueurs",
+                    "Liste des tournois",
+                    "Nom et date d'un tournoi",
+                    "Liste des joueurs d'un tournoi",
+                    "Liste des tours et matchs d'un tournoi",
+                ]
+            )
+
             if choice == "1":
                 self.list_of_players()
             elif choice == "2":

@@ -24,6 +24,9 @@ class PlayerController:
             infos["birth_date"],
             infos["identifier"],
         )
+        if db_players.get(Query().identifier == player.identifier) is not None:
+            self.view.display_error(f"Joueur '{player.identifier}' existe deja !")
+            return
         db_players.insert(player.to_dict())
         self.view.display_success(
             f"Joueur {player.identifier} a été ajouté avec succès !"

@@ -27,6 +27,11 @@ class BaseView:
     def display_rapport_title(self, message):
         print("\n 📊 " + Fore.MAGENTA + message + Style.RESET_ALL + "📊\n")
 
+    def display_list(self, list_to_display: list[str]):
+        print()
+        for item in list_to_display:
+            print(item)
+
     def input_choice(self, message):
         return input("\n" + Fore.CYAN + message + Style.RESET_ALL)
 

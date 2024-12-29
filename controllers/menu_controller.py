@@ -3,6 +3,7 @@ from controllers.reports_controller import ReportsController
 from controllers.tournament_controller import TournamentController
 from views.base_view import BaseView
 from views.player_view import PlayerView
+from views.reports_view import ReportsView
 from views.tournament_view import TournamentView
 
 
@@ -28,7 +29,8 @@ class MenuController:
                 player_manager = PlayerController(player_view)
                 player_manager.run()
             elif choice == "3":
-                reports_manager = ReportsController()
+                reports_view = ReportsView()
+                reports_manager = ReportsController(reports_view)
                 reports_manager.run()
             elif choice == "q":
                 break
