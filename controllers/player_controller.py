@@ -1,7 +1,5 @@
-from tinydb import Query
-
 from models.player import Player
-from utils.db import db_players
+from utils.db import db_manager
 from views.player_view import PlayerView
 
 
@@ -24,10 +22,12 @@ class PlayerController:
             infos["birth_date"],
             infos["identifier"],
         )
-        if db_players.get(Query().identifier == player.identifier) is not None:
+        if db_manager.get_player(player.identifier) is not None:
             self.view.display_error(f"Joueur '{player.identifier}' existe deja !")
             return
-        db_players.insert(player.to_dict())
+
+        db_manager.insert_player(player)
+
         self.view.display_success(
             f"Joueur {player.identifier} a été ajouté avec succès !"
         )
@@ -44,13 +44,13 @@ class PlayerController:
             )
         except KeyboardInterrupt:
             return
-        player = db_players.get(Query().identifier == identifier_to_remove)
+        player = db_manager.get_player(identifier_to_remove)
 
         if player is None:
             self.view.display_error(f"Joueur '{identifier_to_remove}' n'existe pas !")
             return
 
-        db_players.remove(Query().identifier == identifier_to_remove)
+        db_manager.remove_player(identifier_to_remove)
         self.view.display_success(
             f"Joueur '{identifier_to_remove}' supprimé avec succès !"
         )
