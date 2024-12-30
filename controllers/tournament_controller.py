@@ -46,6 +46,11 @@ class TournamentController:
         """
         Inscription d'un joueur à un tournoi en utilisant son ID pour le retrouver dans la base de données
         """
+        if tournament["status"] == "En cours" or tournament["status"] == "Termine":
+            self.view.display_error(
+                "Impossible d'inscrire des joueurs à un tournoi en cours ou terminé."
+            )
+            return
         try:
             player_id = self.view.ask_for_input(
                 "Saisissez l'ID du joueur à inscrire (ou tapez 'q' pour annuler la saisie.): ",
@@ -72,7 +77,11 @@ class TournamentController:
         """
         Désinscription d'un joueur à un tournoi en utilisant son ID pour le retrouver dans la base de données
         """
-
+        if tournament["status"] == "En cours" or tournament["status"] == "Termine":
+            self.view.display_error(
+                "Impossible de désinscrire des joueurs d'un tournoi en cours ou terminé."
+            )
+            return
         try:
             player_id = self.view.ask_for_input(
                 "Saisissez l'ID du joueur à inscrire (ou tapez 'q' pour annuler la saisie.): ",

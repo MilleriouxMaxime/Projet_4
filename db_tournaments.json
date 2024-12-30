@@ -9,7 +9,8 @@
       "rounds_list": [],
       "players_list": [],
       "description": "test",
-      "total_round_number": "5"
+      "total_round_number": "5",
+      "status": "Pas commence"
     },
     "2": {
       "name": "Fromage",

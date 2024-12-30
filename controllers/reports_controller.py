@@ -17,7 +17,7 @@ class ReportsController:
         players_list = []
         for player in sorted(players, key=lambda p: p["last_name"]):
             players_list.append(
-                f"{player['last_name']} {player['first_name']} - {player['identifier']}"
+                f"{player["last_name"]} {player["first_name"]} - {player["identifier"]}"
             )
         self.view.display_list(players_list)
 
@@ -30,7 +30,7 @@ class ReportsController:
         tournaments_list = []
         for tournament in tournaments:
             tournaments_list.append(
-                f"{tournament['name']} - Lieu : {tournament['place']}"
+                f"{tournament["name"]} /// Status : {tournament["status"]} /// Lieu : {tournament["place"]}"
             )
         self.view.display_list(sorted(tournaments_list))
 
@@ -53,9 +53,9 @@ class ReportsController:
 
             self.view.display_list(
                 [
-                    f"Nom du tournoi : {tournament['name']}",
-                    f"Date de début du tournoi : {tournament['start_date']}",
-                    f"Date de fin du tournoi : {tournament['end_date']}",
+                    f"Nom du tournoi : {tournament["name"]}",
+                    f"Date de début du tournoi : {tournament["start_date"]}",
+                    f"Date de fin du tournoi : {tournament["end_date"]}",
                 ]
             )
 
@@ -79,7 +79,7 @@ class ReportsController:
         for player_id in tournament["players_list"]:
             player = db_players.get(Query().identifier == player_id)
             players_list.append(
-                f"{player['last_name']} {player['first_name']} - {player['identifier']}"
+                f"{player["last_name"]} {player["first_name"]} - {player["identifier"]}"
             )
 
         self.view.display_list(sorted(players_list))
@@ -108,7 +108,7 @@ class ReportsController:
                 player1 = db_players.get(Query().identifier == match[0][0])
                 player2 = db_players.get(Query().identifier == match[1][0])
                 rounds_list.append(
-                    f"{player1['last_name']} {player1['first_name']} - {player2['last_name']} {player2['first_name']}"
+                    f"{player1["last_name"]} {player1["first_name"]} - {player2["last_name"]} {player2["first_name"]}"
                 )
 
         self.view.display_list(rounds_list)
