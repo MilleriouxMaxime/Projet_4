@@ -1,8 +1,13 @@
-from models.match import Match
 from datetime import datetime
+
+from models.match import Match
 
 
 class Round:
+    """
+    Classe représentant un tour
+    """
+
     def __init__(
         self,
         matchs_list: list[Match],

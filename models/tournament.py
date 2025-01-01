@@ -1,4 +1,8 @@
 class Tournament:
+    """
+    Classe représentant un tournoi
+    """
+
     def __init__(
         self,
         name,

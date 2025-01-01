@@ -13,7 +13,8 @@ class PlayerView(BaseView):
         )
 
         birth_date = self.ask_for_input(
-            "Saisissez la date de naissance du joueur au format JJ/MM/AAAA (ou tapez 'q' pour quitter la création de joueur): ",
+            "Saisissez la date de naissance du joueur au format JJ/MM/AAAA "
+            "(ou tapez 'q' pour quitter la création de joueur): ",
             "date",
         )
         identifier = self.ask_for_input(
