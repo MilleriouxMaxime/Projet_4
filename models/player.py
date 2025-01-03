@@ -1,4 +1,8 @@
 class Player:
+    """
+    Classe représentant un joueur
+    """
+
     def __init__(self, last_name, first_name, birth_date, identifier):
         self.last_name = last_name
         self.first_name = first_name

@@ -1,4 +1,8 @@
 class Match:
+    """
+    Classe représentant un match
+    """
+
     def __init__(
         self,
         player1_id: str,

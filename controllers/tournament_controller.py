@@ -150,7 +150,9 @@ class TournamentController:
                 )
             ]
 
+        display_match_list = []
         matches_list = []
+
         for index in range(0, len(players_list), 2):
             matches_list.append(
                 Match(
@@ -159,6 +161,11 @@ class TournamentController:
                     player2_id=players_list[index + 1],
                     score2=0,
                 )
+            )
+            player1 = db_manager.get_player(players_list[index])
+            player2 = db_manager.get_player(players_list[index + 1])
+            display_match_list.append(
+                f"{player1["last_name"]} {player1["first_name"]} - {player2["last_name"]} {player2["first_name"]}"
             )
 
         tournament["current_round"] += 1
@@ -175,11 +182,20 @@ class TournamentController:
         db_manager.update_tournament(tournament)
 
         self.view.display_success(f"{round.name} créé avec succès !")
+        self.view.display_tournament_title(
+            f"Liste des matchs pour le {tournament['current_round']}"
+        )
+        self.view.display_list(display_match_list)
 
     def add_results_for_the_round(self, tournament):
         if tournament["status"] != "En cours":
             self.view.display_error("Le tournoi n'est pas en cours !")
             return
+
+        if tournament["rounds_list"][-1]["end_date"] is not None:
+            self.view.display_error("Les scores ont déjà été renseignés !")
+            return
+
         self.view.display_tournament_title(f"Round {tournament['current_round']}")
 
         for match in tournament["rounds_list"][-1]["matches_list"]:
@@ -206,8 +222,11 @@ class TournamentController:
         )
 
         self.view.display_success("Résultats ajoutés avec succès !")
-        if tournament["current_round"] == tournament["total_round_number"]:
+
+        if (tournament["current_round"] + 1) == tournament["total_round_number"]:
             tournament["status"] = "Termine"
+            tournament["current_round"] += 1
+            self.view.display_success("Le tournoi est terminé !")
 
         db_manager.update_tournament(tournament)
 
