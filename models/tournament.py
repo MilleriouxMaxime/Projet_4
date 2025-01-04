@@ -13,6 +13,7 @@ class Tournament:
         rounds_list,
         players_list,
         description,
+        scoreboard,
         total_round_number=4,
         status="Pas commence",
     ):
@@ -25,6 +26,7 @@ class Tournament:
         self.players_list = players_list
         self.description = description
         self.total_round_number = total_round_number
+        self.scoreboard = scoreboard
         self.status = status
 
     def to_dict(self):
@@ -37,6 +39,7 @@ class Tournament:
             "rounds_list": [round_.to_dict() for round_ in self.rounds_list],
             "players_list": [player.to_dict() for player in self.players_list],
             "description": self.description,
+            "scoreboard": self.scoreboard,
             "total_round_number": self.total_round_number,
             "status": self.status,
         }

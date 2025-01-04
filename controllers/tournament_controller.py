@@ -31,6 +31,7 @@ class TournamentController:
             [],
             [],
             infos["description"],
+            {},
             infos["total_round_number"],
         )
 
@@ -136,12 +137,7 @@ class TournamentController:
         if tournament["rounds_list"] == []:
             random.shuffle(players_list)
         else:
-            players_scores = defaultdict(float)
-
-            for round in tournament["rounds_list"]:
-                for match in round["matches_list"]:
-                    for player_id, score in match:
-                        players_scores[player_id] += score
+            players_scores = tournament["scoreboard"]
 
             players_list = [
                 key
@@ -182,9 +178,7 @@ class TournamentController:
         db_manager.update_tournament(tournament)
 
         self.view.display_success(f"{round.name} créé avec succès !")
-        self.view.display_tournament_title(
-            f"Liste des matchs pour le {tournament['current_round']}"
-        )
+        self.view.display_tournament_title(f"Liste des matchs pour le {round.name}")
         self.view.display_list(display_match_list)
 
     def add_results_for_the_round(self, tournament):
@@ -217,16 +211,38 @@ class TournamentController:
                 match[0][1] = 0.5
                 match[1][1] = 0.5
 
+            if player1_id not in tournament["scoreboard"]:
+                tournament["scoreboard"][player1_id] = 0
+            if player2_id not in tournament["scoreboard"]:
+                tournament["scoreboard"][player2_id] = 0
+
+            tournament["scoreboard"][player1_id] += match[0][1]
+            tournament["scoreboard"][player2_id] += match[1][1]
+
         tournament["rounds_list"][-1]["end_date"] = datetime.now().strftime(
             "%Y-%m-%d %H:%M"
         )
 
         self.view.display_success("Résultats ajoutés avec succès !")
+        scoreboard = sorted(
+            tournament["scoreboard"].items(), key=lambda item: item[1], reverse=True
+        )
 
-        if (tournament["current_round"] + 1) == tournament["total_round_number"]:
+        self.view.display_tournament_title("Tableau des scores : ")
+
+        for player_id, score in scoreboard:
+            player = db_manager.get_player(player_id)
+            self.view.display_info(
+                f"{player['last_name']} {player['first_name']} : {score}"
+            )
+
+        if tournament["current_round"] == tournament["total_round_number"]:
             tournament["status"] = "Termine"
-            tournament["current_round"] += 1
             self.view.display_success("Le tournoi est terminé !")
+            player = db_manager.get_player(scoreboard[0][0])
+            self.view.display_tournament_title(
+                f"Vainqueur : {player['last_name']} {player['first_name']}"
+            )
 
         db_manager.update_tournament(tournament)
 

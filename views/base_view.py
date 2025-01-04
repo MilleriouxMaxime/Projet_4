@@ -14,6 +14,9 @@ class BaseView:
             else:
                 self.display_choice_error(input_type)
 
+    def display_info(self, message):
+        print(message)
+
     def display_error(self, message):
         print("\n ⚠️  " + Fore.RED + message + Style.RESET_ALL + "⚠️\n")
 
