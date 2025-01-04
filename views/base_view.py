@@ -1,5 +1,6 @@
 from colorama import Fore, Style
 
+from models.round import Round
 from utils.validator import Validator
 
 
@@ -53,6 +54,17 @@ class BaseView:
         elif input_type == "round":
             self.display_error(
                 "Le nombre de tour ne peut pas être 0 ou inférieur et ne peut pas dépasser 10."
+            )
+
+    def display_matches_for_round(self, round: Round, players: dict):
+
+        players = {player["identifier"]: player for player in players}
+
+        for match in round.matchs_list:
+            player1 = players[match.player1_id]
+            player2 = players[match.player2_id]
+            self.display_info(
+                f"{player1["last_name"]} {player1['first_name']} vs {player2['last_name']} {player2['first_name']}"
             )
 
     def input_choice(self, message):

@@ -12,6 +12,45 @@ class TournamentController:
     def __init__(self, view: TournamentView):
         self.view = view
 
+    def get_sorted_players_list(self, tournament):
+        players_list = tournament["players_list"]
+        if tournament["rounds_list"] == []:
+            random.shuffle(players_list)
+        else:
+            players_scores = tournament["scoreboard"]
+
+            players_list = [
+                key
+                for key, _ in sorted(
+                    players_scores.items(), key=lambda item: item[1], reverse=True
+                )
+            ]
+
+        return players_list
+
+    def create_round(self, tournament, players_list):
+        matches_list = []
+
+        for index in range(0, len(players_list), 2):
+            matches_list.append(
+                Match(
+                    player1_id=players_list[index],
+                    score1=0,
+                    player2_id=players_list[index + 1],
+                    score2=0,
+                )
+            )
+
+        tournament["current_round"] += 1
+
+        round = Round(
+            matchs_list=matches_list,
+            name=f"Round {tournament['current_round']}",
+            start_time=datetime.now(),
+            end_time=None,
+        )
+        return round
+
     def create_tournament(self):
         """
         Création d'un tournoi
@@ -110,7 +149,7 @@ class TournamentController:
         )
 
     def start_next_round(self, tournament):
-        if tournament["current_round"] == tournament["total_round_number"]:
+        if tournament["status"] == "Termine":
             self.view.display_error("Le tournoi est terminé !")
             return
 
@@ -134,44 +173,8 @@ class TournamentController:
             self.view.display_error("Le tour n'est pas encore terminé !")
             return
 
-        if tournament["rounds_list"] == []:
-            random.shuffle(players_list)
-        else:
-            players_scores = tournament["scoreboard"]
-
-            players_list = [
-                key
-                for key, _ in sorted(
-                    players_scores.items(), key=lambda item: item[1], reverse=True
-                )
-            ]
-
-        display_match_list = []
-        matches_list = []
-
-        for index in range(0, len(players_list), 2):
-            matches_list.append(
-                Match(
-                    player1_id=players_list[index],
-                    score1=0,
-                    player2_id=players_list[index + 1],
-                    score2=0,
-                )
-            )
-            player1 = db_manager.get_player(players_list[index])
-            player2 = db_manager.get_player(players_list[index + 1])
-            display_match_list.append(
-                f"{player1["last_name"]} {player1["first_name"]} - {player2["last_name"]} {player2["first_name"]}"
-            )
-
-        tournament["current_round"] += 1
-
-        round = Round(
-            matchs_list=matches_list,
-            name=f"Round {tournament['current_round']}",
-            start_time=datetime.now(),
-            end_time=None,
-        )
+        players_list = self.get_sorted_players_list(tournament)
+        round = self.create_round(tournament, players_list)
 
         tournament["rounds_list"].append(round.to_dict())
         tournament["status"] = "En cours"
@@ -179,7 +182,7 @@ class TournamentController:
 
         self.view.display_success(f"{round.name} créé avec succès !")
         self.view.display_tournament_title(f"Liste des matchs pour le {round.name}")
-        self.view.display_list(display_match_list)
+        self.view.display_matches_for_round(round, db_manager.get_all_players())
 
     def add_results_for_the_round(self, tournament):
         if tournament["status"] != "En cours":
