@@ -12,6 +12,35 @@ class TournamentController:
     def __init__(self, view: TournamentView):
         self.view = view
 
+    def insert_match_result(self, tournament):
+
+        for match in tournament["rounds_list"][-1]["matches_list"]:
+            player1_id = match[0][0]
+            player2_id = match[1][0]
+
+            try:
+                choice = self.view.get_match_results(player1_id, player2_id)
+            except KeyboardInterrupt:
+                return
+
+            if choice == "1":
+                match[0][1] = 1
+                match[1][1] = 0
+            elif choice == "2":
+                match[0][1] = 0
+                match[1][1] = 1
+            elif choice == "3":
+                match[0][1] = 0.5
+                match[1][1] = 0.5
+
+            if player1_id not in tournament["scoreboard"]:
+                tournament["scoreboard"][player1_id] = 0
+            if player2_id not in tournament["scoreboard"]:
+                tournament["scoreboard"][player2_id] = 0
+
+            tournament["scoreboard"][player1_id] += match[0][1]
+            tournament["scoreboard"][player2_id] += match[1][1]
+
     def get_sorted_players_list(self, tournament):
         players_list = tournament["players_list"]
         if tournament["rounds_list"] == []:
@@ -194,34 +223,7 @@ class TournamentController:
             return
 
         self.view.display_tournament_title(f"Round {tournament['current_round']}")
-
-        for match in tournament["rounds_list"][-1]["matches_list"]:
-            player1_id = match[0][0]
-            player2_id = match[1][0]
-
-            try:
-                choice = self.view.get_match_results(player1_id, player2_id)
-            except KeyboardInterrupt:
-                return
-
-            if choice == "1":
-                match[0][1] = 1
-                match[1][1] = 0
-            elif choice == "2":
-                match[0][1] = 0
-                match[1][1] = 1
-            elif choice == "3":
-                match[0][1] = 0.5
-                match[1][1] = 0.5
-
-            if player1_id not in tournament["scoreboard"]:
-                tournament["scoreboard"][player1_id] = 0
-            if player2_id not in tournament["scoreboard"]:
-                tournament["scoreboard"][player2_id] = 0
-
-            tournament["scoreboard"][player1_id] += match[0][1]
-            tournament["scoreboard"][player2_id] += match[1][1]
-
+        self.insert_match_result(tournament)
         tournament["rounds_list"][-1]["end_date"] = datetime.now().strftime(
             "%Y-%m-%d %H:%M"
         )
