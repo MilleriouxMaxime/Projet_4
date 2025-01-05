@@ -9,7 +9,8 @@ class PlayerController:
 
     def create_player(self):
         """
-        Ajouter un joueur à la base de données
+        Demande les infos d'un joueur et l'ajoute à la base de données
+        Si le joueur existe déjà, affiche un message d'erreur
         """
         self.view.display_player_title("Création de joueur")
         try:
@@ -34,7 +35,8 @@ class PlayerController:
 
     def remove_player(self):
         """
-        Supprimer un joueur de la base de données
+        Demande l'ID d'un joueur et le supprime de la base de données
+        Si le joueur n'existe pas, affiche un message d'erreur
         """
         self.view.display_player_title("Suppression de joueur")
         try:
@@ -56,6 +58,9 @@ class PlayerController:
         )
 
     def run(self):
+        """
+        Affiche le menu des joueurs et demande à l'utilisateur de choisir une option
+        """
         while True:
             self.view.display_player_title("Gestion des joueurs")
             choice = self.view.ask_for_options(

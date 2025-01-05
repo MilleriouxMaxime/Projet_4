@@ -1,3 +1,6 @@
+from models.round import Round
+
+
 class Tournament:
     """
     Classe représentant un tournoi
@@ -5,17 +8,17 @@ class Tournament:
 
     def __init__(
         self,
-        name,
-        place,
-        start_date,
-        end_date,
-        current_round,
-        rounds_list,
-        players_list,
-        description,
-        scoreboard,
-        total_round_number=4,
-        status="Pas commence",
+        name: str,
+        place: str,
+        start_date: str,
+        end_date: str,
+        current_round: int,
+        rounds_list: list[Round],
+        players_list: list[str],
+        description: str,
+        scoreboard: dict[str, int],
+        total_round_number: int = 4,
+        status: str = "Pas commence",
     ):
         self.name = name
         self.place = place
@@ -37,7 +40,7 @@ class Tournament:
             "end_date": self.end_date,
             "current_round": self.current_round,
             "rounds_list": [round_.to_dict() for round_ in self.rounds_list],
-            "players_list": [player.to_dict() for player in self.players_list],
+            "players_list": self.players_list,
             "description": self.description,
             "scoreboard": self.scoreboard,
             "total_round_number": self.total_round_number,

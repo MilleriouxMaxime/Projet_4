@@ -3,6 +3,10 @@ from views.base_view import BaseView
 
 class PlayerView(BaseView):
     def get_player_infos(self):
+        """
+        Demande les infos du joueur
+        Retourne un dictionnaire contenant les infos du joueur
+        """
         last_name = self.ask_for_input(
             "Saisissez le nom du joueur (ou tapez 'q' pour quitter la création de joueur): ",
             "name",

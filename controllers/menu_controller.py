@@ -12,6 +12,11 @@ class MenuController:
         self.view = view
 
     def run(self):
+        """
+        Affiche le menu principal
+        Demande à l'utilisateur de choisir une option
+        Selon le choix, affiche un sous-menu ou une erreur
+        """
         while True:
             choice = self.view.ask_for_options(
                 [

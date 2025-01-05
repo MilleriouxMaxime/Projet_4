@@ -7,6 +7,10 @@ class ReportsController:
         self.view = view
 
     def get_tournament(self):
+        """
+        Affiche tous les tournois et demande à l'utilisateur d'en choisir un
+        Retourne le tournoi choisi
+        """
         while True:
             tournaments = db_manager.get_all_tournaments()
             tournament_names = [tournament["name"] for tournament in tournaments]
@@ -52,7 +56,7 @@ class ReportsController:
 
     def get_tournament_name_and_date(self):
         """
-        Afficher le nom et la date d'un tournoi
+        Afficher le nom et la date d'un tournoi choisi
         """
         self.view.display_rapport_title("Nom et Dates d'un tournoi")
 
@@ -69,7 +73,7 @@ class ReportsController:
 
     def list_of_players_in_tournament(self):
         """
-        Afficher la liste des ID de joueurs d'un tournoi
+        Afficher la liste des ID de joueurs d'un tournoi choisi
         """
         self.view.display_rapport_title("Liste des joueurs d'un tournoi")
 
@@ -88,7 +92,7 @@ class ReportsController:
 
     def list_of_rounds_and_matches_in_tournament(self):
         """
-        Afficher la liste des tours et matchs d'un tournoi
+        Afficher la liste des tours et matchs d'un tournoi choisi
         """
         self.view.display_rapport_title("Liste des tours et matchs d'un tournoi")
 
@@ -111,7 +115,7 @@ class ReportsController:
 
     def run(self):
         """
-        Gestion des rapports
+        Affiche le menu des rapports et demande à l'utilisateur de choisir une option
         """
         while True:
             self.view.display_rapport_title("Rapports")

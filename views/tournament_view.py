@@ -5,6 +5,10 @@ from views.base_view import BaseView
 
 class TournamentView(BaseView):
     def get_tournament_infos(self):
+        """
+        Demande les infos du tournoi
+        Retourne un dictionnaire contenant les infos du tournoi
+        """
         name = self.ask_for_input(
             "Saisissez le nom du tournoi (ou tapez 'q' pour quitter la création de tournoi): ",
             None,
@@ -42,6 +46,10 @@ class TournamentView(BaseView):
         }
 
     def get_match_results(self, player1_id, player2_id):
+        """
+        Demande les résultats d'un match
+        Retourne le choix de l'utilisateur
+        """
         print(
             f"\n{Fore.YELLOW}Qui a gagné ? {player1_id} ou {player2_id} :{Style.RESET_ALL}\n"
         )

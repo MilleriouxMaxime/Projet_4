@@ -1,5 +1,4 @@
 import random
-from collections import defaultdict
 from datetime import datetime
 
 from models.round import Match, Round
@@ -13,6 +12,11 @@ class TournamentController:
         self.view = view
 
     def insert_match_result(self, tournament):
+        """
+        Demande le resultat de chaque match du tour
+        Met à jour les scores d'un match
+        Met à jour le tableau de scores
+        """
 
         for match in tournament["rounds_list"][-1]["matches_list"]:
             player1_id = match[0][0]
@@ -42,6 +46,10 @@ class TournamentController:
             tournament["scoreboard"][player2_id] += match[1][1]
 
     def get_sorted_players_list(self, tournament):
+        """
+        Si c'est le premier tour, mélange les joueurs
+        Sinon, ordonne les joueurs selon leurs scores dans le tableau des scores
+        """
         players_list = tournament["players_list"]
         if tournament["rounds_list"] == []:
             random.shuffle(players_list)
@@ -58,6 +66,10 @@ class TournamentController:
         return players_list
 
     def create_round(self, tournament, players_list):
+        """
+        Crée les matchs d'un tour
+        Crée un nouveau tour
+        """
         matches_list = []
 
         for index in range(0, len(players_list), 2):
@@ -178,6 +190,12 @@ class TournamentController:
         )
 
     def start_next_round(self, tournament):
+        """
+        Vérifie que le tournoi n'est pas terminé
+        Crée un nouveau tour
+        Met a jour le tournoi dans la base de données
+        Affiche les matchs du nouveau tour
+        """
         if tournament["status"] == "Termine":
             self.view.display_error("Le tournoi est terminé !")
             return
@@ -211,9 +229,12 @@ class TournamentController:
 
         self.view.display_success(f"{round.name} créé avec succès !")
         self.view.display_tournament_title(f"Liste des matchs pour le {round.name}")
-        self.view.display_matches_for_round(round, db_manager.get_all_players())
+        self.show_matches_for_round(round)
 
     def add_results_for_the_round(self, tournament):
+        """
+        Met à jour les score d'un match dans un tournoi dans la base de données
+        """
         if tournament["status"] != "En cours":
             self.view.display_error("Le tournoi n'est pas en cours !")
             return
@@ -252,6 +273,10 @@ class TournamentController:
         db_manager.update_tournament(tournament)
 
     def run(self):
+        """
+        Affiche le menu d'un tournoi
+        Demande à l'utilisateur de choisir une option
+        """
         while True:
             self.view.display_tournament_title("Gestion des tournois")
             choice = self.view.ask_for_options(["Créer un tournoi", "Gérer un tournoi"])
@@ -263,6 +288,10 @@ class TournamentController:
                 break
 
     def manage_tournament(self):
+        """
+        Affiche tous les tournois et demande à l'utilisateur de choisir un tournoi
+        Affiche le menu pour le tournoi sélectionné
+        """
         while True:
             self.view.display_tournament_title("Gérer un tournoi")
             tournaments = db_manager.get_all_tournaments()
@@ -282,6 +311,10 @@ class TournamentController:
             self.manage_selected_tournament(tournament)
 
     def manage_selected_tournament(self, tournament):
+        """
+        Affiche le menu pour le tournoi sélectionné
+        Demande à l'utilisateur de choisir une option
+        """
         tournament_name = tournament["name"]
         while True:
             self.view.display_tournament_title(f"Tournoi '{tournament_name}'")
@@ -304,3 +337,15 @@ class TournamentController:
 
             elif choice == "q":
                 break
+
+    def show_matches_for_round(self, round: Round):
+        """
+        Affiche les matchs d'un tour
+        """
+
+        for match in round.matchs_list:
+            player1 = db_manager.get_player(match.player1_id)
+            player2 = db_manager.get_player(match.player2_id)
+            self.view.display_info(
+                f"{player1["last_name"]} {player1['first_name']} vs {player2['last_name']} {player2['first_name']}"
+            )
