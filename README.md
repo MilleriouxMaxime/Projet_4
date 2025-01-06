@@ -34,6 +34,12 @@ Pour lancer le script, utiliser la commande suivante :
 python main.py
 ```
 
-# Resultats
+# Spécificité 
+Une base de données test est déjà disponible pour lancer un tournoi.  
+Cette base de données contient :  
+* Plusieurs joueurs.
+* Un tournoi non commencé en 2 rounds avec 4 joueurs inscrits.
 
+
+# Resultats
 Le script va lancer le menu principal vous permettant via des choix dans le terminal de créer, gérer et inspecter des tournois.

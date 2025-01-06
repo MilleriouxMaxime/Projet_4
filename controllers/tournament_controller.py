@@ -22,8 +22,16 @@ class TournamentController:
             player1_id = match[0][0]
             player2_id = match[1][0]
 
+            player1 = db_manager.get_player(player1_id)
+            player2 = db_manager.get_player(player2_id)
+
+            player1_full_name = f"{player1['last_name']} {player1['first_name']}"
+            player2_full_name = f"{player2['last_name']} {player2['first_name']}"
+
             try:
-                choice = self.view.get_match_results(player1_id, player2_id)
+                choice = self.view.get_match_results(
+                    player1_full_name, player2_full_name
+                )
             except KeyboardInterrupt:
                 return
 

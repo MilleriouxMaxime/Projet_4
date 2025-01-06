@@ -23,30 +23,6 @@
       "first_name": "Mickael",
       "birth_date": "13/12/2000",
       "identifier": "GH67890"
-    },
-    "5": {
-      "last_name": "Williams",
-      "first_name": "Steeven",
-      "birth_date": "14/12/2000",
-      "identifier": "IJ12345"
-    },
-    "6": {
-      "last_name": "Cohen",
-      "first_name": "Eliot",
-      "birth_date": "08/12/1994",
-      "identifier": "KL67890"
-    },
-    "7": {
-      "last_name": "Durand",
-      "first_name": "Durand",
-      "birth_date": "11/11/2011",
-      "identifier": "MN12345"
-    },
-    "8": {
-      "last_name": "Dam",
-      "first_name": "Dam",
-      "birth_date": "02/02/2012",
-      "identifier": "YZ12345"
     }
   }
 }

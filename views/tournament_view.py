@@ -45,16 +45,16 @@ class TournamentView(BaseView):
             "description": description,
         }
 
-    def get_match_results(self, player1_id, player2_id):
+    def get_match_results(self, player1, player2):
         """
         Demande les résultats d'un match
         Retourne le choix de l'utilisateur
         """
         print(
-            f"\n{Fore.YELLOW}Qui a gagné ? {player1_id} ou {player2_id} :{Style.RESET_ALL}\n"
+            f"\n{Fore.YELLOW}Qui a gagné ? {player1} ou {player2} :{Style.RESET_ALL}\n"
         )
-        print(f"1. {player1_id}")
-        print(f"2. {player2_id}")
+        print(f"1. {player1}")
+        print(f"2. {player2}")
         print("3. Egalité")
         print("q. Quitter")
 
