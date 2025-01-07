@@ -147,6 +147,10 @@ class TournamentController:
             self.view.display_error(f"Joueur '{player_id}' n'existe pas !")
             return
 
+        if player_id in tournament["players_list"]:
+            self.view.display_error(f"Joueur '{player_id}' est deja inscrit !")
+            return
+
         tournament_name = tournament["name"]
         tournament["players_list"].append(player_id)
         db_manager.update_tournament(tournament)
@@ -175,7 +179,7 @@ class TournamentController:
         player = db_manager.get_player(player_id)
 
         if player is None:
-            self.view.display_error(f"Player '{player_id}' not found!")
+            self.view.display_error(f"Joueur '{player_id}' n'existe pas !")
             return
 
         tournament_name = tournament["name"]
