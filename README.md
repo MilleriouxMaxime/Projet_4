@@ -34,11 +34,11 @@ Pour lancer le script, utiliser la commande suivante :
 python main.py
 ```
 
-# Spécificité 
+# Spécificité
 Une base de données test est déjà disponible pour lancer un tournoi.  
 Cette base de données contient :  
-* Plusieurs joueurs.
-* Un tournoi non commencé en 2 rounds avec 4 joueurs inscrits.
+* Quatre joueurs.
+* Un tournoi TEST non commencé en 2 rounds avec 4 joueurs inscrits.
 
 
 # Resultats

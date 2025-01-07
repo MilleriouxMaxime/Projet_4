@@ -1,13 +1,13 @@
 {
   "_default": {
     "1": {
-      "name": "TEST2",
-      "place": "TEST2",
+      "name": "TEST",
+      "place": "TEST",
       "start_date": "04/04/2025",
       "end_date": "04/04/2025",
       "current_round": 0,
       "rounds_list": [],
-      "players_list": ["AB12345", "CD67890", "EF12345", "GH67890"],
+      "players_list": ["GH67890", "CD67890", "EF12345", "AB12345"],
       "description": "",
       "scoreboard": {},
       "total_round_number": 2,

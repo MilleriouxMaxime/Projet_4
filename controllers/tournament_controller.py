@@ -28,12 +28,7 @@ class TournamentController:
             player1_full_name = f"{player1['last_name']} {player1['first_name']}"
             player2_full_name = f"{player2['last_name']} {player2['first_name']}"
 
-            try:
-                choice = self.view.get_match_results(
-                    player1_full_name, player2_full_name
-                )
-            except KeyboardInterrupt:
-                return
+            choice = self.view.get_match_results(player1_full_name, player2_full_name)
 
             if choice == "1":
                 match[0][1] = 1
@@ -252,7 +247,10 @@ class TournamentController:
             return
 
         self.view.display_tournament_title(f"Round {tournament['current_round']}")
-        self.insert_match_result(tournament)
+        try:
+            self.insert_match_result(tournament)
+        except KeyboardInterrupt:
+            return
         tournament["rounds_list"][-1]["end_date"] = datetime.now().strftime(
             "%Y-%m-%d %H:%M"
         )

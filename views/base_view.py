@@ -1,6 +1,5 @@
 from colorama import Fore, Style
 
-from models.round import Round
 from utils.validator import Validator
 
 
